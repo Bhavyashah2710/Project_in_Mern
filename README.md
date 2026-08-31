@@ -10,7 +10,26 @@ The repository contains multiple independent projects demonstrating different co
 
 ## 📂 Projects Included
 
-### 1. AdminLTEv4
+### 1. News App
+
+A dynamic news application that fetches health-related news using an external API and displays articles in an interactive, responsive interface.
+
+**Features:**
+- Fetches news using an external API
+- Displays news articles dynamically
+- Loads articles in batches while scrolling
+- Interactive news article modal
+- Displays article image, title, description, source and publication date
+- Link to visit the original news website
+
+**Technologies:**
+- HTML
+- CSS
+- JavaScript
+- XMLHttpRequest
+- External News API
+
+### 2. AdminLTEv4
 A dashboard-style frontend project inspired by the AdminLTE design system.
 
 **Technologies:**
@@ -20,7 +39,7 @@ A dashboard-style frontend project inspired by the AdminLTE design system.
 - Flexbox / Grid
 - Responsive UI
 
-### 2. Dynamic Rendering
+### 3. Dynamic Rendering
 A JavaScript-based project demonstrating dynamic content rendering and DOM manipulation.
 
 **Features:**
@@ -29,7 +48,7 @@ A JavaScript-based project demonstrating dynamic content rendering and DOM manip
 - Interactive frontend elements
 - Data-driven UI
 
-### 3. Hotel Website
+### 4. Hotel Website
 A hotel-themed website containing multiple pages and interactive functionality.
 
 **Pages include:**
@@ -41,7 +60,7 @@ A hotel-themed website containing multiple pages and interactive functionality.
 - CSS
 - JavaScript
 
-### 4. Mario Project
+### 5. Mario Project
 A small Mario-themed frontend project created to practice webpage structure, styling and JavaScript interactions.
 
 **Technologies:**
@@ -49,7 +68,7 @@ A small Mario-themed frontend project created to practice webpage structure, sty
 - CSS
 - JavaScript
 
-### 5. StudioNamma
+### 6. StudioNamma
 A personal/portfolio-style frontend project containing development and programming-related content.
 
 It includes sections/resources related to:
@@ -67,6 +86,7 @@ It includes sections/resources related to:
 | HTML5 | Structure |
 | CSS3 | Styling & Layout |
 | JavaScript | Interactivity & DOM |
+| XMLHttpRequest | API communication |
 | Flexbox | Responsive layouts |
 | CSS Grid | Page layouts |
 | Git & GitHub | Version control |
@@ -80,6 +100,7 @@ The projects demonstrate practical implementation of concepts such as:
 - Responsive web design
 - DOM manipulation
 - Dynamic rendering
+- API integration
 - CSS layouts
 - Interactive UI
 - Multi-page websites
@@ -91,6 +112,7 @@ The projects demonstrate practical implementation of concepts such as:
 ```text
 Project_in_Mern/
 │
+├── News/
 ├── AdminLTEv4/
 ├── Dynamic randering/
 ├── Hotel/
