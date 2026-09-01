@@ -30,7 +30,12 @@ function getUser(callback) {
 }
 
 function renderNextBatch() {
-    if (allArticles.length === 0) return;
+    if (!allArticles || allArticles.length === 0) {
+        isFetching = false;
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
 
     for (let i = 0; i < batchSize; i++) {
         const article = allArticles[currentIndex % allArticles.length];
@@ -63,10 +68,14 @@ function renderNextBatch() {
         meta.textContent = sourceName + (publishedAt ? ' • ' + publishedAt : '');
         item.appendChild(meta);
 
-        newsContainer.appendChild(item);
+        fragment.appendChild(item);
     }
 
-    isFetching = false;
+    newsContainer.appendChild(fragment);
+
+    setTimeout(() => {
+        isFetching = false;
+    }, 150);
 }
 
 function openModal(article) {
@@ -100,14 +109,25 @@ window.onclick = function (event) {
     }
 };
 
-window.onscroll = function () {
-    const reachedBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 350);
+function handleScroll() {
+    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    const windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight || 0;
+    const totalHeight = Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.offsetHeight
+    );
 
-    if (reachedBottom && !isFetching) {
-        isFetching = true;
-        renderNextBatch();
+    if (scrollPosition + windowHeight >= totalHeight - 500) {
+        if (!isFetching) {
+            isFetching = true;
+            renderNextBatch();
+        }
     }
-};
+}
+
+window.addEventListener('scroll', handleScroll, { passive: true });
 
 getUser((err, data) => {
     if (err) {
