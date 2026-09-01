@@ -1,7 +1,17 @@
 let allArticles = [];
 let currentIndex = 0;
-const batchSize = 24;
-let debounceTimer;
+const batchSize = 12;
+let isFetching = false;
+
+const newsContainer = document.getElementById('newsContainer');
+const newsModal = document.getElementById('newsModal');
+const modalImg = document.getElementById('modalImg');
+const modalTitle = document.getElementById('modalTitle');
+const modalMeta = document.getElementById('modalMeta');
+const modalDesc = document.getElementById('modalDesc');
+const modalContent = document.getElementById('modalContent');
+const modalRealLink = document.getElementById('modalRealLink');
+const closeModalBtn = document.getElementById('closeModal');
 
 function getUser(callback) {
     const xhr = new XMLHttpRequest();
@@ -10,27 +20,26 @@ function getUser(callback) {
         if (xhr.status >= 200 && xhr.status < 300) {
             callback(null, xhr.responseText);
         } else {
-            callback("server error", null);
+            callback('Server error', null);
         }
     };
     xhr.onerror = function () {
-        callback("Network error", null);
+        callback('Network error', null);
     };
     xhr.send();
 }
 
-// navi news 
 function renderNextBatch() {
-    const container = document.getElementById('newsContainer');
-    
-  
-    const nextArticles = allArticles.slice(currentIndex, currentIndex + batchSize);
-    
-    nextArticles.forEach(article => {
+    if (allArticles.length === 0) return;
+
+    for (let i = 0; i < batchSize; i++) {
+        const article = allArticles[currentIndex % allArticles.length];
+        currentIndex++;
+
         const item = document.createElement('div');
         item.className = 'news-item';
 
-        item.onclick = function() {
+        item.onclick = function () {
             openModal(article);
         };
 
@@ -54,68 +63,59 @@ function renderNextBatch() {
         meta.textContent = sourceName + (publishedAt ? ' • ' + publishedAt : '');
         item.appendChild(meta);
 
-        container.appendChild(item);
-    });
+        newsContainer.appendChild(item);
+    }
 
-    currentIndex += batchSize;
+    isFetching = false;
 }
-
 
 function openModal(article) {
-    const modal = document.getElementById('newsModal');
-    document.getElementById('modalImg').src = article.urlToImage || 'https://via.placeholder.com/500x250?text=No+Image';
-    document.getElementById('modalTitle').textContent = article.title || 'No Title Available';
-    
+    modalImg.src = article.urlToImage || 'https://via.placeholder.com/500x250?text=No+Image';
+    modalTitle.textContent = article.title || 'No Title Available';
+
     const sourceName = article.source && article.source.name ? article.source.name : 'Unknown Source';
     const publishedAt = article.publishedAt ? new Date(article.publishedAt).toLocaleString() : '';
-    document.getElementById('modalMeta').textContent = sourceName + (publishedAt ? ' | ' + publishedAt : '');
-    
-    document.getElementById('modalDesc').textContent = article.description || 'No description available.';
-    document.getElementById('modalContent').textContent = article.content || '';
-    
-    const realBtn = document.getElementById('modalRealLink');
+    modalMeta.textContent = sourceName + (publishedAt ? ' | ' + publishedAt : '');
+
+    modalDesc.textContent = article.description || 'No description available.';
+    modalContent.textContent = article.content || '';
+
     if (article.url) {
-        realBtn.href = article.url;
-        realBtn.style.display = 'inline-block';
+        modalRealLink.href = article.url;
+        modalRealLink.style.display = 'inline-block';
     } else {
-        realBtn.style.display = 'none';
+        modalRealLink.style.display = 'none';
     }
 
-    modal.style.display = 'flex';
+    newsModal.style.display = 'flex';
 }
 
-
-document.getElementById('closeModal').onclick = function() {
-    document.getElementById('newsModal').style.display = 'none';
+closeModalBtn.onclick = function () {
+    newsModal.style.display = 'none';
 };
 
-
-window.onclick = function(event) {
-    const modal = document.getElementById('newsModal');
-    if (event.target === modal) {
-        modal.style.display = 'none';
+window.onclick = function (event) {
+    if (event.target === newsModal) {
+        newsModal.style.display = 'none';
     }
 };
 
+window.onscroll = function () {
+    const reachedBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 350);
 
-window.onscroll = function() {
-    clearTimeout(debounceTimer);
-    
-    debounceTimer = setTimeout(function() {
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) {
-            if (currentIndex < allArticles.length) {
-                renderNextBatch();
-            }
-        }
-    }, 500); 
+    if (reachedBottom && !isFetching) {
+        isFetching = true;
+        renderNextBatch();
+    }
 };
+
 getUser((err, data) => {
     if (err) {
         console.error(err);
-        document.getElementById('newsContainer').textContent = 'Failed to load news.';
+        newsContainer.textContent = 'Failed to load news.';
         return;
     }
     const parsed = JSON.parse(data);
     allArticles = parsed.articles || [];
-    renderNextBatch(); 
+    renderNextBatch();
 });
